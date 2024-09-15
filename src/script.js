@@ -1,24 +1,33 @@
-document.getElementById('encryptAndUpload').addEventListener('click', async () => {
+document.getElementById('usePassword').addEventListener('change', function() {
+    const passwordContainer = document.getElementById('passwordContainer');
+    passwordContainer.style.display = this.checked ? 'block' : 'none';
+});
+
+document.getElementById('publish').addEventListener('click', async () => {
     const content = document.getElementById('content').value;
     if (!content) {
         alert('Please enter some text.');
         return;
     }
 
-    // Encrypt the content
-    const password = prompt('Enter a password for encryption:');
-    if (!password) {
-        alert('Encryption password is required.');
-        return;
+    let encryptedContent;
+    const usePassword = document.getElementById('usePassword').checked;
+    if (usePassword) {
+        const password = document.getElementById('password').value;
+        if (!password) {
+            alert('Please enter a password.');
+            return;
+        }
+        encryptedContent = await encryptContent(content, password);
+    } else {
+        encryptedContent = btoa(content); // Base64 encode if no password
     }
-
-    const encryptedContent = await encryptContent(content, password);
 
     // Upload to IPFS
     const hash = await uploadToIPFS(encryptedContent);
 
     // Generate shareable link
-    const shareLink = `${window.location.origin}/view.html?hash=${hash}&key=${btoa(password)}`;
+    const shareLink = `${window.location.origin}/view.html?hash=${hash}&key=${usePassword ? btoa(password) : ''}`;
     document.getElementById('shareLink').value = shareLink;
     document.getElementById('linkContainer').style.display = 'block';
 });

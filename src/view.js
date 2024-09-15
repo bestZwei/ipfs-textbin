@@ -1,15 +1,15 @@
 (async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const hash = urlParams.get('hash');
-    const key = atob(urlParams.get('key'));
+    const key = urlParams.get('key') ? atob(urlParams.get('key')) : null;
 
-    if (!hash || !key) {
+    if (!hash) {
         document.getElementById('contentDisplay').innerText = 'Invalid link.';
         return;
     }
 
     const content = await fetchFromIPFS(hash);
-    const decryptedContent = await decryptContent(content, key);
+    const decryptedContent = key ? await decryptContent(content, key) : atob(content);
     document.getElementById('contentDisplay').innerHTML = marked(decryptedContent);
 })();
 
