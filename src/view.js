@@ -8,13 +8,21 @@
         return;
     }
 
-    const content = await fetchFromIPFS(hash);
-    const decryptedContent = key ? await decryptContent(content, key) : atob(content);
-    document.getElementById('contentDisplay').innerHTML = marked(decryptedContent);
+    try {
+        const content = await fetchFromIPFS(hash);
+        const decryptedContent = key ? await decryptContent(content, key) : atob(content);
+        document.getElementById('contentDisplay').innerHTML = marked(decryptedContent);
+    } catch (error) {
+        document.getElementById('contentDisplay').innerText = 'Error fetching or decrypting content.';
+        console.error(error);
+    }
 })();
 
 async function fetchFromIPFS(hash) {
     const response = await fetch(`https://cdn.ipfsscan.io/ipfs/${hash}`);
+    if (!response.ok) {
+        throw new Error('Failed to fetch content from IPFS');
+    }
     return response.text();
 }
 
