@@ -8,13 +8,18 @@ document.getElementById('publish').addEventListener('click', async () => {
     // Base64 encode the content
     const encodedContent = btoa(content);
 
-    // Upload to IPFS
-    const hash = await uploadToIPFS(encodedContent);
+    try {
+        // Upload to IPFS
+        const hash = await uploadToIPFS(encodedContent);
 
-    // Generate shareable link
-    const shareLink = `${window.location.origin}/view.html?hash=${hash}`;
-    document.getElementById('shareLink').value = shareLink;
-    document.getElementById('linkContainer').style.display = 'block';
+        // Generate shareable link
+        const shareLink = `${window.location.origin}/view.html?hash=${hash}`;
+        document.getElementById('shareLink').value = shareLink;
+        document.getElementById('linkContainer').style.display = 'block';
+    } catch (error) {
+        console.error('Error uploading to IPFS:', error);
+        alert('Failed to upload content. Please try again.');
+    }
 });
 
 document.getElementById('copyLink').addEventListener('click', () => {
@@ -32,6 +37,10 @@ async function uploadToIPFS(content) {
         method: 'POST',
         body: formData
     });
+
+    if (!response.ok) {
+        throw new Error('Failed to upload to IPFS');
+    }
 
     const data = await response.json();
     return data.Hash;
