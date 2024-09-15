@@ -13,14 +13,14 @@
         document.getElementById('contentDisplay').innerHTML = marked(decodedContent);
     } catch (error) {
         document.getElementById('contentDisplay').innerText = 'Error fetching content.';
-        console.error(error);
+        console.error('Error fetching content:', error);
     }
 })();
 
 async function fetchFromIPFS(hash) {
-    const response = await fetch(`https://cdn.ipfsscan.io/ipfs/${hash}`);
+    const response = await fetch(`https://i0.img2ipfs.com/ipfs/${hash}`);
     if (!response.ok) {
-        throw new Error('Failed to fetch content from IPFS');
+        throw new Error(`Failed to fetch content from IPFS: ${response.statusText}`);
     }
     return response.text();
 }
