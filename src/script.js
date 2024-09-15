@@ -62,10 +62,14 @@ async function uploadToIPFS(content) {
     const formData = new FormData();
     formData.append('file', new Blob([content], { type: 'text/plain' }));
 
-    const response = await fetch('https://cdn.ipfsscan.io/api/v0/add?pin=false', {
+    const response = await fetch('https://ipfs.infura.io:5001/api/v0/add', {
         method: 'POST',
         body: formData
     });
+
+    if (!response.ok) {
+        throw new Error('Failed to upload to IPFS');
+    }
 
     const data = await response.json();
     return data.Hash;

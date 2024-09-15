@@ -19,7 +19,7 @@
 })();
 
 async function fetchFromIPFS(hash) {
-    const response = await fetch(`https://cdn.ipfsscan.io/ipfs/${hash}`);
+    const response = await fetch(`https://ipfs.infura.io/ipfs/${hash}`);
     if (!response.ok) {
         throw new Error('Failed to fetch content from IPFS');
     }
